@@ -3,15 +3,16 @@ const CODES = {
   Z: 90
 }
 
-function toCell() {
+function toCell(_, col) {
   return `
-    <div class="cell" contenteditable spellcheck="false"></div>
+    <div class="cell" contenteditable spellcheck="false"
+     data-col="${col}"></div>
   `
 }
 
-function toColumn(col) {
+function toColumn(col, index) {
   return `
-    <div class="column" data-type="resizable">
+    <div class="column" data-type="resizable" data-col="${index}">
       ${col}
       <div class="col-resize" data-resize="col"></div>
     </div>
@@ -21,7 +22,7 @@ function toColumn(col) {
 function createRow(num, content) {
   const resizer = num ? `<div class="row-resize" data-resize="row"></div>` : ''
   return `
-    <div class="row" data-type="resizable_row">
+    <div class="row" data-type="resizable">
       <div class="row-info">
         ${num ? num : ''}
         ${resizer}
@@ -45,12 +46,10 @@ export function createTable(rowsCount = 15) {
       .map(toColumn)
       .join('')
 
-  // console.log(cols)
 
   rows.push(createRow(null, cols))
 
 
-  // console.log(colsOthers)
   const cells = new Array(colsCount).fill('').map(toCell).join('')
   for (let i = 0; i < rowsCount; i++) {
     rows.push(createRow(i+1, cells))
@@ -59,13 +58,3 @@ export function createTable(rowsCount = 15) {
   return rows.join('')
 }
 
-export function adjustCells(rowsCount = 15, charCode, tableElement, value) {
-  // const cellIndex = charCode.charCodeAt() - CODES.A
-  // const cells = new Array(rowsCount).fill('').map
-  // for (let i = 0; i < rowsCount; i++) {
-  // console.log("Hello!")
-  // }
-  tableElement.children[1].children[1].children[2].style.width = value + 'px'
-  tableElement.children[2].children[1].children[2].style.width = value + 'px'
-  // console.log(tableElement)
-}
