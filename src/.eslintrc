@@ -11,7 +11,10 @@
         "comma-dangle": "off",
         "require-jsdoc": "off",
         "operator-linebreak": "off",
-        "no-debugger": "off"
+        "no-debugger": "off",
+        "linebreak-style": 0,
+        "global-require": 0,
+        "eslint linebreak-style": [0, "error", "windows"]
     },
     "extends": ["eslint:recommended", "google"]
 }
