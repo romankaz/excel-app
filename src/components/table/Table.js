@@ -10,9 +10,11 @@ export class Table extends ExcelComponent {
   static className = 'excel__table'
   static rowsNumber = 50
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
-      listeners: ['mousedown', 'keydown']
+      name: 'Table',
+      listeners: ['mousedown', 'keydown', 'input'],
+      ...options
     })
   }
   toHTML() {
@@ -25,9 +27,20 @@ export class Table extends ExcelComponent {
 
   init() {
     super.init()
-    const $cell = this.$root.find('[data-id="0:0"]')
-    $cell.$el.blur()
+    this.selectCell(this.$root.find('[data-id="0:0"]'))
+
+    this.$on('formula:input', text => {
+      this.selection.current.text(text)
+    })
+    
+    this.$on('formula:done', () => {
+      this.selection.current.focus()
+    })
+  }
+
+  selectCell($cell) {
     this.selection.select($cell)
+    this.$emit('table:select', $cell)
   }
 
   onMousedown(event) {
@@ -48,78 +61,6 @@ export class Table extends ExcelComponent {
     }
   }
 
-  onKeydown2(event) {
-    if (isCell(event)) {
-      switch (event.code) {
-        case 'ArrowDown': {
-          const current = $(event.target).id(true)
-          const targetId = `${current.row + 1}:${current.col}`
-          const $target = this.$root.find(`[data-id="${targetId}"]`)
-          if ($target.$el) {
-            // event.target.blur()
-            $target.$el.focus()
-            this.selection.select($target)
-          }
-          break;
-        }
-        case 'ArrowUp': {
-          const current = $(event.target).id(true)
-          const targetId = `${current.row - 1}:${current.col}`
-          const $target = this.$root.find(`[data-id="${targetId}"]`)
-          if ($target.$el) {
-            $target.$el.focus()
-            this.selection.select($target)
-          }
-          break;
-        }
-        case 'ArrowLeft': {
-          const current = $(event.target).id(true)
-          const targetId = `${current.row}:${current.col - 1}`
-          const $target = this.$root.find(`[data-id="${targetId}"]`)
-          if ($target.$el) {
-            $target.$el.focus()
-            this.selection.select($target)
-          }
-          break;
-        }
-        case 'ArrowRight': {
-          const current = $(event.target).id(true)
-          const targetId = `${current.row}:${current.col + 1}`
-          const $target = this.$root.find(`[data-id="${targetId}"]`)
-          if ($target.$el) {
-            $target.$el.focus()
-            this.selection.select($target)
-          }
-          break;
-        }
-        case 'Enter': {
-          const current = $(event.target).id(true)
-          const targetId = `${current.row + 1}:${current.col}`
-          const $target = this.$root.find(`[data-id="${targetId}"]`)
-          if ($target.$el) {
-            // $target.$el.blur()
-            $target.$el.focus()
-            this.selection.select($target)
-          }
-          break;
-        }
-        case 'Tab': {
-          const current = $(event.target).id(true)
-          const targetId = `${current.row}:${current.col + 1}`
-          const $target = this.$root.find(`[data-id="${targetId}"]`)
-          if ($target.$el) {
-            // $target.$el.blur()
-            // $target.$el.focus()
-            this.selection.select($target)
-          }
-          break;
-        }
-        default:
-          break;
-      }
-    }
-  }
-
   onKeydown(event) {
     const keys = [
       'Enter',
@@ -135,8 +76,12 @@ export class Table extends ExcelComponent {
       event.preventDefault()
       const id = this.selection.current.id(true)
       const $next = this.$root.find(nextSelector(key, id))
-      this.selection.select($next)
+      this.selectCell($next)
     }
+  }
+
+  onInput(event) {
+    this.$emit('table:input', $(event.target))
   }
 }
 

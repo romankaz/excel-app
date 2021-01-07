@@ -8,6 +8,7 @@
     "rules": {
         "semi": "off",
         "arrow-parens": "off",
+        "no-trailing-spaces": "off",
         "comma-dangle": "off",
         "require-jsdoc": "off",
         "operator-linebreak": "off",

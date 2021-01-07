@@ -5,7 +5,7 @@ export class TableSelection {
     this.group = []
     this.current = null
   }
-  // $ell instanceof DOM === true
+  
   select($el) {
     this.clear()
     this.group.push($el)
