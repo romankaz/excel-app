@@ -9,6 +9,7 @@
         "semi": "off",
         "arrow-parens": "off",
         "no-trailing-spaces": "off",
+        "eol-last": "off",
         "comma-dangle": "off",
         "require-jsdoc": "off",
         "operator-linebreak": "off",
