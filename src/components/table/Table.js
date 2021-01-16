@@ -5,6 +5,8 @@ import {isCell, matrix, shouldResize, nextSelector} from './table.functions';
 import {TableSelection} from './TableSelection';
 import {$} from '../../core/dom';
 import * as actions from '../../redux/actions'
+import {defaultStyles} from '../../constants';
+import {parse} from '../../core/parse';
 
 
 export class Table extends ExcelComponent {
@@ -26,33 +28,49 @@ export class Table extends ExcelComponent {
     this.selection = new TableSelection()
   }
 
+  // storeChanged(changes) {
+  //   console.log(changes)
+  // }
+
   init() {
     super.init()
     this.selectCell(this.$root.find('[data-id="0:0"]'))
 
-    this.$on('formula:input', text => {
-      this.selection.current.text(text)
+    this.$on('formula:input', value => {
+      this.selection.current
+          .attr('data-value', value)
+          .text(parse(value))
+      // this.selection.current.text(text)
+      this.updateTextInStore(value)
     })
     
     this.$on('formula:done', () => {
       this.selection.current.focus()
     })
 
-    // this.$subscribe(state => {
-    //   console.log('TableState', state)
-    // })
+    this.$on('toolbar:applyStyle', value => {
+      this.selection.applyStyle(value)
+      this.$dispatch(actions.applyStyle({
+        value,
+        ids: this.selection.selectedIds
+      }))
+    })
   }
 
   selectCell($cell) {
     this.selection.select($cell)
     this.$emit('table:select', $cell)
+    const styles = $cell.getStyles(Object.keys(defaultStyles))
+    console.log('Styles to dispatch', styles)
+    this.$dispatch(actions.changeStyles(styles))
+    // console.log($cell.getStyles(Object.keys(defaultStyles)))
   }
 
   async resizeTable(event) {
     try {
       const data = await resizeHandler(this.$root, event)
       this.$dispatch(actions.tableResize(data))
-      console.log('Resize data: ', data) 
+      // console.log('Resize data: ', data) 
     } catch (error) {
       console.warn('Resize error', error.message)
     }
@@ -95,8 +113,16 @@ export class Table extends ExcelComponent {
     }
   }
 
+  updateTextInStore(value) {
+    this.$dispatch(actions.changeText({
+      id: this.selection.current.id(),
+      value
+    }))
+  }
+
   onInput(event) {
-    this.$emit('table:input', $(event.target))
+    // this.$emit('table:input', $(event.target)) 
+    this.updateTextInStore($(event.target).text())
   }
 }
 

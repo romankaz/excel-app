@@ -21,3 +21,36 @@ export function storage(key, data = null) {
   }
   localStorage.setItem(key, JSON.stringify(data))
 }
+
+export function isEqual(a, b) {
+  if (typeof a === 'object' && typeof b === 'object') {
+    return JSON.stringify(a) === JSON.stringify(b)
+  }
+  return a === b
+}
+
+export function campleToDashCase(str) {
+  return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`)
+}
+
+export function toInlineStyles(styles = {}) {
+  return Object.keys(styles)
+      .map(key => `${campleToDashCase(key)}: ${styles[key]}`)
+      .join(';')
+}
+
+export function debounce(fn, wait) {
+  let timeout
+  return function(...args) {
+    const later = () => {
+      clearTimeout(timeout)
+      // eslint-disable-next-line
+      fn.apply(this, args)
+      fn(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+  }
+}
+
+

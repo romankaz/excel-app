@@ -21,6 +21,6 @@ export class Store {
   }
 
   getState() {
-    return this.state
+    return JSON.parse(JSON.stringify(state))
   }
 }

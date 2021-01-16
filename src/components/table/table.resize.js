@@ -35,12 +35,14 @@ export function resizeHandler($root, event) {
           $root.findAll(`[data-col="${$parent.data.col}"]`)
               .forEach(el => el.style.width = value + 'px')
         } else {
+          // console.log($parent.$el.innerText)
           $parent.css({height: value + 'px'})
         }
 
         resolve({
           value,
-          id: type === 'col' ? $parent.data.col : null
+          id: $parent.data[type],
+          type: type
         })
         
         $resizer.css({opacity: 0, bottom: 0, right: 0})
