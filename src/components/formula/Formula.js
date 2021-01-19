@@ -38,7 +38,7 @@ export class Formula extends ExcelComponent {
   }
 
   storeChanged(changes) {
-    console.log('changes', changes)
+    // console.log('changes', changes)
   }
 
   onInput(event) {
